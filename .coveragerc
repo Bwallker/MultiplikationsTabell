@@ -1,2 +1,2 @@
 [run]
-omit = ./count_keeper_venv/*
+omit = ./venv/*
