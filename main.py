@@ -86,10 +86,11 @@ def should_increase_in_difficulty() -> bool:
     while True:
         print("Should the difficulty increase over time? (Y/N)")
         increases_in_difficulty_as_str = input("> ")
-        if increases_in_difficulty_as_str.strip().lower() in ("y", "yes"):
+        increases_in_difficulty_as_str = increases_in_difficulty_as_str.strip().lower()
+        if increases_in_difficulty_as_str in ("y", "yes"):
             print()
             return True
-        elif increases_in_difficulty_as_str.strip().lower() in ("n", "no"):
+        elif increases_in_difficulty_as_str in ("n", "no"):
             print()
             return False
         print("You did not input a valid value. Try again")
