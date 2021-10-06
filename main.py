@@ -1,22 +1,21 @@
 import random
-from typing import Any
-#Inbygger ett val av svårighetsgrad
-class Difficulty:
-    def __init__(self, min_value: int, max_value: int, increases_in_difficulty: bool = False) -> None:
-        self.min_value = min_value
-        self.max_value = max_value
-        self.increases_in_difficulty = increases_in_difficulty
-    def __str__(self) -> str:
-        return f"{self.min_value} {self.max_value}"
+import dataclasses
 
+
+@dataclasses.dataclass
+class Difficulty:
+    min_value: int
+    max_value: int
+    increases_in_difficulty: bool = False
 
 
 def get_difficulty() -> Difficulty:
+    # Constants here since globals are not allowed
     EASY = Difficulty(1, 10)
     MEDIUM = Difficulty(1, 20)
     HARD = Difficulty(10, 100)
-    EXPERT = Difficulty(1000, 100000)
-    EXTREME = Difficulty(10000000, 10000000000, True)
+    EXPERT = Difficulty(100, 500)
+    EXTREME = Difficulty(1000, 5000, True)
     DIFFICULTIES = {
         "easy": EASY,
         "medium": MEDIUM,
@@ -24,105 +23,142 @@ def get_difficulty() -> Difficulty:
         "expert": EXPERT,
         "extreme": EXTREME
     }
-    print("type easy for easy difficulty")
-    print("type medium for medium difficulty")
-    print("type hard for hard difficulty")
-    print("type expert for expert difficulty")
+    for value in DIFFICULTIES:
+        print(f"type {value} for {value} difficulty")
+    # Custom isn't in difficulties since it doesn't have predefined values
     print("type custom for custom difficulty")
     print()
+
     while True:
-        difficulty_as_str = input("What difficulty do you want? ")
-        print()
+        print("What difficulty do you want?")
+        difficulty_as_str = input("> ")
         difficulty_as_str = difficulty_as_str.strip().lower()
+        print()
         if difficulty_as_str in DIFFICULTIES:
             return DIFFICULTIES[difficulty_as_str]
         elif difficulty_as_str == 'custom':
-            while True:
-                try:
-                    min_value = int(input('What minimum value do you want? '))
-                    print()
-                except ValueError:
-                    print("Your min value must be an integer")
-                    continue
-                max_value: int
-                while True:
-                    try:
-                        max_value = int(input('What maximum value do you want? '))
-                        print()
-                        break
-                    except ValueError:
-                        print("Your max value must be an integer")
-                        continue
-                if max_value <= min_value:
-                    print("max value must be bigger than min value")
-                    print()
-                    continue
-                increases_in_difficulty: bool                
-                while True:
-                    increases_in_difficulty_as_str = input("Should the difficulty increase over time? (Y/N)")
-                    if increases_in_difficulty_as_str.strip().lower() in ("y", "true", "t"):
-                        increases_in_difficulty = True
-                        print()
-                        break
-                    elif increases_in_difficulty_as_str.strip().lower() in ("n", "false", "f"):
-                        increases_in_difficulty = False
-                        print()
-                        break
-                    print("You did not input a valid value")
-                    print()
-
-                return Difficulty(min_value, max_value, increases_in_difficulty)
+            return get_custom_difficulty()
         else:
             print("Your difficulty was not valid. Try again.")
+            print()
 
-#Inbygger mängden av omgångar                        
-def get_rounds() -> int:
-    print("How many rounds do you want to play?")
+
+def get_custom_difficulty() -> Difficulty:
     while True:
+        min_value = get_min_value()
+        max_value = get_max_value()
+        if max_value <= min_value:
+            print("Biggest number must be bigger than smaller number")
+            print()
+            continue
+        increases_in_difficulty = should_increase_in_difficulty()
+
+        return Difficulty(min_value, max_value, increases_in_difficulty)
+
+
+def get_min_value() -> int:
+    while True:
+        print('What should the smallest number the computer might guess be?')
+        try:
+            min_value = int(input('> '))
+            print()
+            # Negative values are allowed
+            return min_value
+        except ValueError:
+            print("Your smallest number must be an integer. Try again")
+            print()
+
+
+def get_max_value() -> int:
+    while True:
+        print('What should the biggest number the computer might guess be?')
+        try:
+            max_value = int(input('> '))
+            print()
+            # Negative values are allowed
+            return max_value
+        except ValueError:
+            print("Your biggest number must be an integer. Try again")
+            print()
+
+
+def should_increase_in_difficulty() -> bool:
+    while True:
+        print("Should the difficulty increase over time? (Y/N)")
+        increases_in_difficulty_as_str = input("> ")
+        if increases_in_difficulty_as_str.strip().lower() in ("y", "yes"):
+            print()
+            return True
+        elif increases_in_difficulty_as_str.strip().lower() in ("n", "no"):
+            print()
+            return False
+        print("You did not input a valid value. Try again")
+        print()
+
+
+def get_rounds() -> int:
+    while True:
+        print("How many rounds do you want to play?")
         try:
             rounds = int(input("> "))
-            if rounds < 1: raise ValueError
+            if rounds < 1:
+                raise ValueError
+            print()
             return rounds
         except ValueError:
-            print("rounds to play must be an int")
-def get_random_number(min_value: int, max_value: int) -> int:
-    return      
-        
+            print("Rounds to play must be a positive integer. Try again")
+            print()
+
+
 def main() -> None:
     print("#######Multiplikationstabell#######")
-    print("The computer will generate two random numbers in an interval you choose, and your job is to multiply them correctly")
-    print("Best score wins!")
+    print("The computer will generate two random numbers in an interval you choose every round, and your job is to multiply them correctly")
+    print("You are graded based on how many rounds you get right")
     print()
     rounds = get_rounds()
     difficulty = get_difficulty()
     correct_answers = 0
-    for i in range(rounds):
+    print("Starting game!")
+    print()
+    for _ in range(rounds):
         number_1 = random.randint(difficulty.min_value, difficulty.max_value)
         number_2 = random.randint(difficulty.min_value, difficulty.max_value)
         print()
         print(f"What is {number_1} * {number_2}?")
         answer = number_1*number_2
-        user_answer: int
-        while True:
-            try:
-                user_answer = int(input("Answer: "))
-                break
-            except ValueError:
-                print("Your answer must be an int")
+        user_answer = get_user_answer()
+
         if difficulty.increases_in_difficulty:
-            difficulty.min_value += 1000
-            difficulty.max_value += 1000
+            # Arbitrarily chosen increase factor. Future feature idea might be to allow the user to change it
+            difficulty.min_value = int(difficulty.min_value*1.2)
+            difficulty.max_value = int(difficulty.max_value*1.2)
+        print(difficulty)
         if answer != user_answer:
             print("Wrong answer!")
+            print(f"Correct answer was: {answer}")
+            print()
             continue
         print("Correct answer!")
+        print()
         correct_answers += 1
-    
+    print("Game finished!")
+    print()
     print(f"You got {correct_answers} out of {rounds} questions right!")
     as_percentage = (correct_answers/rounds)*100
-    #Remove decimals
-    as_percentage = round(as_percentage, 0)
-    as_percentage = int(as_percentage)
+    # Remove decimals
+    # round is returning a float even though it claims to return an int?
+    as_percentage = int(round(as_percentage, 0))
     print(f"You got {as_percentage}% right!")
-if __name__ == '__main__':        
+
+
+def get_user_answer() -> int:
+    while True:
+        try:
+            return int(input("Answer: "))
+        except ValueError:
+            print("Your answer must be an integer")
+            print()
+
+
+if __name__ == '__main__':
     main()
