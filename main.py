@@ -15,10 +15,6 @@ class Grade:
     max_percentage: int
 
 
-class IllegalGrades(Exception):
-    pass
-
-
 def get_difficulty() -> Difficulty:
     # Constants here since globals are not allowed
     EASY = Difficulty(1, 10)
@@ -148,15 +144,10 @@ def main() -> None:
         if grade.min_percentage == grade.max_percentage:
             print(
                 f"If {grade.min_percentage}% of your answers are correct you get {str_rep} as your grade")
-        elif grade.min_percentage > grade.max_percentage:
-            # Runtime wannabe testcase
-            # Currently never triggers
-            # There incase GRADES is made incorrect in the future
-            raise IllegalGrades(
-                "min_percentage should be lesser than or equal to max_percentage in a Grade")
         else:
             print(
                 f"If {grade.min_percentage}-{grade.max_percentage}% of your answers are correct you get {str_rep} as your grade")
+            
     print()
     rounds = get_rounds()
     difficulty = get_difficulty()
@@ -207,15 +198,10 @@ def main() -> None:
     as_percentage = int(round(as_percentage, 0))
     print(f"You got {as_percentage}% right!")
 
-    grade_as_str: str = None
+    grade_as_str: str
     for str_rep, grade in GRADES.items():
         if grade.min_percentage <= as_percentage and grade.max_percentage >= as_percentage:
             grade_as_str = str_rep
-    if grade_as_str is None:
-        # Runtime wannabe testcase
-        # Currently never triggers
-        # There incase GRADES is made incorrect in the future
-        raise IllegalGrades("GRADES should cover all percentages")
     print(f"Grade: {grade_as_str}")
 
 

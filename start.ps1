@@ -1,2 +1,2 @@
 venv/Scripts/activate.ps1
-python count_keeper.py
+python main.py

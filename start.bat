@@ -1,1 +1,1 @@
-venv\Scripts\activate.bat && python count_keeper.py
+venv\Scripts\activate.bat && python main.py

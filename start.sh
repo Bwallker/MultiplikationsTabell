@@ -7,4 +7,4 @@ activate () {
 activate
 
 #!/usr/bin/python3
-python3 count_keeper.py
+python3 main.py
