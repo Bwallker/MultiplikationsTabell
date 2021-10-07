@@ -9,6 +9,16 @@ class Difficulty:
     increases_in_difficulty: bool = False
 
 
+@dataclasses.dataclass
+class Grade:
+    min_percentage: int
+    max_percentage: int
+
+
+class IllegalGrades(Exception):
+    pass
+
+
 def get_difficulty() -> Difficulty:
     # Constants here since globals are not allowed
     EASY = Difficulty(1, 10)
@@ -23,8 +33,8 @@ def get_difficulty() -> Difficulty:
         "expert": EXPERT,
         "extreme": EXTREME
     }
-    for value in DIFFICULTIES:
-        print(f"type {value} for {value} difficulty")
+    for difficulty_as_str in DIFFICULTIES:
+        print(f"type {difficulty_as_str} for {difficulty_as_str} difficulty")
     # Custom isn't in difficulties since it doesn't have predefined values
     print("type custom for custom difficulty")
     print()
@@ -116,6 +126,38 @@ def main() -> None:
     print("The computer will generate two random numbers in an interval you choose every round, and your job is to multiply them correctly")
     print("You are graded based on how many rounds you get right")
     print()
+    # Constants here since globals are not allowed
+    FAILED = Grade(0, 50)
+    PASSED = Grade(51, 60)
+    OK = Grade(61, 70)
+    GOOD = Grade(71, 80)
+    GREAT = Grade(81, 90)
+    EXCELLENT = Grade(91, 99)
+    PERFECT = Grade(100, 100)
+    GRADES = {
+        "Failed": FAILED,
+        "Passed": PASSED,
+        "OK": OK,
+        "Good": GOOD,
+        "Great": GREAT,
+        "Excellent": EXCELLENT,
+        "Perfect": PERFECT
+    }
+    print("Grades are:")
+    for str_rep, grade in GRADES.items():
+        if grade.min_percentage == grade.max_percentage:
+            print(
+                f"If {grade.min_percentage}% of your answers are correct you get {str_rep} as your grade")
+        elif grade.min_percentage > grade.max_percentage:
+            # Runtime wannabe testcase
+            # Currently never triggers
+            # There incase GRADES is made incorrect in the future
+            raise IllegalGrades(
+                "min_percentage should be lesser than or equal to max_percentage in a Grade")
+        else:
+            print(
+                f"If {grade.min_percentage}-{grade.max_percentage}% of your answers are correct you get {str_rep} as your grade")
+    print()
     rounds = get_rounds()
     difficulty = get_difficulty()
     correct_answers = 0
@@ -129,16 +171,30 @@ def main() -> None:
         answer = number_1*number_2
         user_answer = get_user_answer()
 
-        if difficulty.increases_in_difficulty:
-            # Arbitrarily chosen increase factor. Future feature idea might be to allow the user to change it
-            difficulty.min_value = int(difficulty.min_value*1.2)
-            difficulty.max_value = int(difficulty.max_value*1.2)
-        print(difficulty)
         if answer != user_answer:
             print("Wrong answer!")
             print(f"Correct answer was: {answer}")
             print()
             continue
+
+        if difficulty.increases_in_difficulty:
+            # Arbitrarily chosen increase factor. Future feature idea might be to allow the user to change it
+
+            difficulty.min_value = int(difficulty.min_value*1.2)
+            difficulty.max_value = int(difficulty.max_value*1.2)
+
+            # +/- 1 so it always changes at least a little bit (int() returns the floor, so int(1*1.2) == 1)
+            # We are moving the values further from 0 since that generally makes it harder than increasing a negative value.
+            if difficulty.min_value < 0:
+                difficulty.min_value -= 1
+            else:
+                difficulty.min_value += 1
+
+            if difficulty.max_value < 0:
+                difficulty.max_value -= 1
+            else:
+                difficulty.max_value += 1
+
         print("Correct answer!")
         print()
         correct_answers += 1
@@ -150,6 +206,17 @@ def main() -> None:
     # round is returning a float even though it claims to return an int?
     as_percentage = int(round(as_percentage, 0))
     print(f"You got {as_percentage}% right!")
+
+    grade_as_str: str = None
+    for str_rep, grade in GRADES.items():
+        if grade.min_percentage <= as_percentage and grade.max_percentage >= as_percentage:
+            grade_as_str = str_rep
+    if grade_as_str is None:
+        # Runtime wannabe testcase
+        # Currently never triggers
+        # There incase GRADES is made incorrect in the future
+        raise IllegalGrades("GRADES should cover all percentages")
+    print(f"Grade: {grade_as_str}")
 
 
 def get_user_answer() -> int:
