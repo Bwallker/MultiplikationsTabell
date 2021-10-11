@@ -1,6 +1,5 @@
 import random
 import dataclasses
-import time
 
 
 @dataclasses.dataclass
