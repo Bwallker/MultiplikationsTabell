@@ -2,3 +2,5 @@ __pycache__
 venv
 htmlcov/
 .coverage
+.vscode
+.pytest_cache
