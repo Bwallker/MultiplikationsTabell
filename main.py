@@ -35,7 +35,6 @@ def get_difficulty() -> Difficulty:
     print("type custom for custom difficulty")
     print()
 
-
     while True:
         print("What difficulty do you want?")
         difficulty_as_str = input("> ")
