@@ -1,5 +1,6 @@
 import random
 import dataclasses
+import time
 
 
 @dataclasses.dataclass
@@ -147,7 +148,7 @@ def main() -> None:
         else:
             print(
                 f"If {grade.min_percentage}-{grade.max_percentage}% of your answers are correct you get {str_rep} as your grade")
-            
+
     print()
     rounds = get_rounds()
     difficulty = get_difficulty()
@@ -203,6 +204,7 @@ def main() -> None:
         if grade.min_percentage <= as_percentage and grade.max_percentage >= as_percentage:
             grade_as_str = str_rep
     print(f"Grade: {grade_as_str}")
+    input("Press enter to exit")
 
 
 def get_user_answer() -> int:
