@@ -202,6 +202,7 @@ def main() -> None:
     for str_repr, grade in GRADES.items():
         if grade.min_percentage <= as_percentage and grade.max_percentage >= as_percentage:
             grade_as_str = str_repr
+            break
     print(f"Grade: {grade_as_str}")
     input("Press enter to exit")
 
