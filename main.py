@@ -34,7 +34,6 @@ def get_difficulty() -> Difficulty:
     # Custom isn't in difficulties since it doesn't have predefined values
     print("type custom for custom difficulty")
     print()
-    
 
     while True:
         print("What difficulty do you want?")
