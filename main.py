@@ -141,13 +141,13 @@ def main() -> None:
         "Perfect": PERFECT
     }
     print("Grades are:")
-    for str_rep, grade in GRADES.items():
+    for str_repr, grade in GRADES.items():
         if grade.min_percentage == grade.max_percentage:
             print(
-                f"If {grade.min_percentage}% of your answers are correct you get {str_rep} as your grade")
+                f"If {grade.min_percentage}% of your answers are correct you get {str_repr} as your grade")
         else:
             print(
-                f"If {grade.min_percentage}-{grade.max_percentage}% of your answers are correct you get {str_rep} as your grade")
+                f"If {grade.min_percentage}-{grade.max_percentage}% of your answers are correct you get {str_repr} as your grade")
 
     print()
     rounds = get_rounds()
@@ -200,9 +200,9 @@ def main() -> None:
     print(f"You got {as_percentage}% right!")
 
     grade_as_str: str
-    for str_rep, grade in GRADES.items():
+    for str_repr, grade in GRADES.items():
         if grade.min_percentage <= as_percentage and grade.max_percentage >= as_percentage:
-            grade_as_str = str_rep
+            grade_as_str = str_repr
     print(f"Grade: {grade_as_str}")
     input("Press enter to exit")
 
